@@ -40,7 +40,7 @@ packages:
     source: sdk
     version: "0.0.0"
   http:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -67,6 +67,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  network_client:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "489accf9f9af75cfc7f3d536b5e6d0abbd0892b2"
+      url: "https://github.com/mahmed8003/network_client"
+    source: git
+    version: "0.0.1"
   path:
     dependency: transitive
     description:

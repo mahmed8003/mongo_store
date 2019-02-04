@@ -4,9 +4,8 @@ import 'dart:convert' show json;
 
 import 'package:meta/meta.dart';
 
-import 'network_client.dart';
+import 'package:network_client/network_client.dart';
 
-export 'network_client.dart' show RequestInterceptor, ResponseInterceptor;
 
 class MongoStoreException implements Exception {
   MongoStoreException.fromMap(Map<String, dynamic> data)
@@ -190,7 +189,6 @@ class MongoStore {
     final data = await _findOneData(url);
     return data;
   }
-
 
   ///
   ///

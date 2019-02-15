@@ -16,6 +16,11 @@ class MongoStoreException implements Exception {
   final int statusCode;
   final String error;
   final String message;
+
+  @override
+  String toString() {
+    return message ?? error;
+  }
 }
 
 class PopulateOptions {
@@ -110,7 +115,7 @@ class MongoStore {
     final tVersion = version ?? this.version;
     String url = '$baseUrl$tPrefix$tVersion/$collection/$id';
     if (queryParams.isNotEmpty) {
-      url = '?${_encodeMap(queryParams)}';
+      url = '$url?${_encodeMap(queryParams)}';
     }
 
     final data = await _findOneData(url);
@@ -183,7 +188,7 @@ class MongoStore {
     final tVersion = version ?? this.version;
     String url = '$baseUrl$tPrefix$tVersion/$collection/one';
     if (queryParams.isNotEmpty) {
-      url = '?${_encodeMap(queryParams)}';
+      url = '$url?${_encodeMap(queryParams)}';
     }
 
     final data = await _findOneData(url);
@@ -256,7 +261,7 @@ class MongoStore {
     final tVersion = version ?? this.version;
     String url = '$baseUrl$tPrefix$tVersion/$collection';
     if (queryParams.isNotEmpty) {
-      url = '?${_encodeMap(queryParams)}';
+      url = '$url?${_encodeMap(queryParams)}';
     }
 
     final data = await _findManyData(url);
@@ -269,20 +274,10 @@ class MongoStore {
   Future<void> createDocument({
     @required String collection,
     @required Map<String, dynamic> payload,
-    final bool safe,
-    final bool validateBeforeSave,
     final String prefix,
     final String version,
   }) async {
     final Map<String, String> queryParams = {};
-
-    if (safe != null) {
-      queryParams['safe'] = safe.toString();
-    }
-
-    if (validateBeforeSave != null) {
-      queryParams['validateBeforeSave'] = validateBeforeSave.toString();
-    }
 
     // Create Url
     final tPrefix = prefix ?? this.prefix;
@@ -336,7 +331,7 @@ class MongoStore {
     final tVersion = version ?? this.version;
     String url = '$baseUrl$tPrefix$tVersion/$collection/$id';
     if (queryParams.isNotEmpty) {
-      url = '?${_encodeMap(queryParams)}';
+      url = '$url?${_encodeMap(queryParams)}';
     }
 
     final data = await _findOneAndUpdateData(url, payload);
@@ -563,10 +558,10 @@ class MongoStore {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _findManyData(String url) async {
+  Future<List<dynamic>> _findManyData(String url) async {
     final resp = await _client.get(url, headers: _getHeaders());
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
-      final List<Map<String, dynamic>> respBody = json.decode(resp.body);
+      final List<dynamic> respBody = json.decode(resp.body);
       return respBody;
     } else {
       final Map<String, dynamic> respBody = json.decode(resp.body);
@@ -599,8 +594,9 @@ class MongoStore {
     String url,
     Map<String, dynamic> payload,
   ) async {
+    final body = json.encode(payload);
     final resp =
-        await _client.patch(url, headers: _getHeaders(), body: payload);
+        await _client.patch(url, headers: _getHeaders(), body: body);
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
       final Map<String, dynamic> respBody = json.decode(resp.body);
       return respBody;
